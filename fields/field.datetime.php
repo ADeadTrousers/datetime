@@ -103,6 +103,7 @@
 				$classes[] = $class;
 			}
 
+			$cutter = '';
 			// Get timer
 			if($time == 1) {
 				$cutter = '<div class="timer">' .
@@ -124,7 +125,7 @@
 					self::__createCalendar() .
 					$cutter .
 				'</div>',
-				array('class' => implode($classes, ' '))
+				array('class' => implode(' ', $classes))
 			);
 		}
 
@@ -146,6 +147,8 @@
 		 */
 		private static function __createDateField($element, $type, $date, $time, $prepopulate=0) {
 
+			$parsed = array();
+			$class = '';
 			// Parse date
 			if(isset($date) || $prepopulate) {
 				$parsed = Calendar::formatDate($date, $time);
@@ -157,7 +160,7 @@
 			}
 
 			// Generate field
-			return '<input type="text" name="fields[' . $element . '][' . $type . '][]" value="' . $parsed['date'] . '" data-timestamp="' . $parsed['timestamp'] . '" class="' . $type . ' ' . $class . '" autocomplete="off" /><em class="' . $type . ' label"></em>';
+			return '<input type="text" name="fields[' . $element . '][' . $type . '][]" value="' . ( $parsed['date'] ?? '' ) . '" data-timestamp="' . ( $parsed['timestamp'] ?? '' ) . '" class="' . $type . ' ' . $class . '" autocomplete="off" /><em class="' . $type . ' label"></em>';
 		}
 
 		private static function __createCalendar() {
@@ -499,8 +502,8 @@
 
 			// Existing dates
 			if(is_array($data)) {
-				if(!is_array($data['start'])) $data['start'] = array($data['start']);
-				if(!is_array($data['end'])) $data['end'] = array($data['end']);
+				if(!isset($data['start']) || !is_array($data['start'])) $data['start'] = array($data['start'] ?? '');
+				if(!isset($data['end']) || !is_array($data['end'])) $data['end'] = array($data['end'] ?? '');
 
 				for($i = 0; $i < count($data['start']); $i++) {
 					$list->appendChild(
